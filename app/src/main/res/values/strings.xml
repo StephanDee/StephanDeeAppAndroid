@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">StephanDeeAppAndroid</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Product ListItem -->
+    <string name="product_description">Beschreibung</string>
+    <string name="product_price">Preis</string>
+    <string name="product_euro">€</string>
 </resources>
