@@ -2,7 +2,8 @@ package de.stephandee.stephandeeappandroid.dbaccess;
 
 public class APIUtils {
 
-    public  static final String API_URL = "localhost:3000";
+    // replace localhost with your IP Address - command prompt - ipconfig - IPv4 Adresse
+    public static final String API_URL = "http://localhost:3000"; // http://localhost:3000
 
     private APIUtils(){
     };

@@ -9,8 +9,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
+import java.util.List;
 
 import de.stephandee.stephandeeappandroid.models.Product;
 
@@ -19,9 +18,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private static final String TAG = "RecyclerViewAdapter";
 
     private Context mContext;
-    private ArrayList<Product> mProduct = new ArrayList<>();
+    private List<Product> mProduct;
 
-    public RecyclerViewAdapter(Context mContext, ArrayList<Product> mProduct) {
+    public RecyclerViewAdapter(Context mContext, List<Product> mProduct) {
         this.mProduct = mProduct;
         this.mContext = mContext;
     }
@@ -29,7 +28,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_listitem, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_product_listitem, viewGroup, false);
         return new ViewHolder(view);
     }
 

@@ -13,13 +13,13 @@ import retrofit2.http.Path;
 
 public interface IProductService {
 
-    @GET("products")
+    @GET("products/")
     Call<List<Product>> getProducts();
 
     @GET("products/{id}")
     Call<Product> getProduct();
 
-    @POST("products")
+    @POST("products/")
     Call<Product> addProduct(@Body Product product);
 
     @PUT("products/{id}")

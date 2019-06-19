@@ -2,8 +2,13 @@
     <string name="app_name">StephanDeeAppAndroid</string>
     <string name="action_settings">Settings</string>
 
-    <!-- Product ListItem -->
+    <!-- Product -->
+    <string name="product_title">Produkt</string>
     <string name="product_description">Beschreibung</string>
     <string name="product_price">Preis</string>
     <string name="product_euro">€</string>
+
+    <!-- Buttons -->
+    <string name="button_reset">Reset</string>
+    <string name="button_save">Save</string>
 </resources>
