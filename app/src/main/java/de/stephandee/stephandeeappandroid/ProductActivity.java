@@ -1,5 +1,6 @@
 package de.stephandee.stephandeeappandroid;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -114,6 +115,8 @@ public class ProductActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Product> call, Response<Product> response) {
                 if (response.isSuccessful()) {
+                    Intent intent = getPriviousIntent(response);
+                    setResult(1, intent);
                     finish();
                     Toast.makeText(ProductActivity.this, "Produkt " + response.body().getName() + " wurde erstellt.", Toast.LENGTH_LONG).show();
                 }
@@ -134,6 +137,9 @@ public class ProductActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Product> call, Response<Product> response) {
                 if (response.isSuccessful()) {
+                    Intent previousIntent = getPriviousIntent(response);
+                    setResult(2, previousIntent);
+                    finish();
                     Toast.makeText(ProductActivity.this, "Produkt " + response.body().getName() + " wurde aktualisiert.", Toast.LENGTH_LONG).show();
                 }
             }
@@ -143,5 +149,15 @@ public class ProductActivity extends AppCompatActivity {
                 Toast.makeText(ProductActivity.this, "Es ist ein Fehler aufgetreten.", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private Intent getPriviousIntent(Response<Product> response) {
+        Intent previousIntent = new Intent(getApplicationContext(), MainActivity.class);
+        previousIntent.putExtra("product_id", response.body().getId());
+        previousIntent.putExtra("product_name", response.body().getName());
+        previousIntent.putExtra("product_description", response.body().getDescription());
+        previousIntent.putExtra("product_price", Float.toString(response.body().getPrice()));
+
+        return previousIntent;
     }
 }

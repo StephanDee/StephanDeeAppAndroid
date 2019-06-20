@@ -1,5 +1,6 @@
 package de.stephandee.stephandeeappandroid;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -41,7 +42,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
         // Log.d(TAG, "onBindViewHolder: called.");
 
         viewHolder.productName.setText(mProduct.get(i).getName());
@@ -54,7 +55,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, ProductActivity.class);
                 intent.putExtra("product_id", mProduct.get(i).getId());
-                mContext.startActivity(intent);
+                ((Activity) mContext).startActivityForResult(intent, 2);
             }
         });
 

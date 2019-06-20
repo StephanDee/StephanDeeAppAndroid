@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private IProductService iProductService;
     private List<Product> mProduct = new ArrayList<>();
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, ProductActivity.class);
-                MainActivity.this.startActivity(intent);
+                MainActivity.this.startActivityForResult(intent, 1);
             }
         });
 
@@ -65,6 +66,45 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Es ist ein Fehler aufgetreten.", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        String productId = null;
+        String productName = null;
+        String productDescription = null;
+        String productPrice = null;
+
+        if (resultCode == 1 || resultCode == 2) {
+            productId = data.getStringExtra("product_id");
+            productName = data.getStringExtra("product_name");
+            productDescription = data.getStringExtra("product_description");
+            productPrice = data.getStringExtra("product_price");
+        }
+
+        switch (resultCode) {
+            case 1: {
+                Product product = new Product(productName, Float.parseFloat(productPrice));
+                product.setDescription(productDescription);
+                mProduct.add(product);
+                recyclerView.getAdapter().notifyItemInserted(mProduct.size() -1);
+                break;
+            }
+            case 2: {
+
+                for (int i = 0; i < mProduct.size(); i++) {
+                    Product product = mProduct.get(i);
+                    if (product.getId().equals(productId)) {
+                        product.setName(productName);
+                        product.setDescription(productDescription);
+                        product.setPrice(Float.parseFloat(productPrice));
+                        recyclerView.getAdapter().notifyItemChanged(i);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -91,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initRecyclerView(List<Product> products) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        RecyclerView recyclerView = findViewById(R.id.productList);
+        recyclerView = findViewById(R.id.productList);
         recyclerView.setLayoutManager(layoutManager);
         RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, products);
         recyclerView.setAdapter(adapter);
