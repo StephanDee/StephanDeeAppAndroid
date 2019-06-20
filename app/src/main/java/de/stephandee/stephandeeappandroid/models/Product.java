@@ -30,13 +30,9 @@ public class Product {
     @Expose
     private int __v;
 
-    public Product(final String _id, Date date, String name, String description, float price, int __v) {
-        this._id = _id;
-        this.date = date;
+    public Product(String name, float price) {
         this.name = name;
-        this.description = description;
         this.price = price;
-        this.__v = __v;
     }
 
     public String getId() {
@@ -45,10 +41,6 @@ public class Product {
 
     public Date getDate() {
         return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 
     public String getName() {
@@ -77,9 +69,5 @@ public class Product {
 
     public int getV() {
         return __v;
-    }
-
-    public void setV(int __v) {
-        this.__v = __v;
     }
 }

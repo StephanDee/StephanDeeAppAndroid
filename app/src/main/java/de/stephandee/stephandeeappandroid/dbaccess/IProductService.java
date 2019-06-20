@@ -17,14 +17,14 @@ public interface IProductService {
     Call<List<Product>> getProducts();
 
     @GET("products/{id}")
-    Call<Product> getProduct();
+    Call<Product> getProduct(@Path("id") String id);
 
     @POST("products/")
-    Call<Product> addProduct(@Body Product product);
+    Call<Product> createProduct(@Body Product product);
 
     @PUT("products/{id}")
-    Call<Product> updateProduct(@Path("_id") String id, @Body Product product);
+    Call<Product> updateProduct(@Path("id") String id, @Body Product product);
 
     @DELETE("products/{id}")
-    Call<Product> deleteProduct(@Path("_id") String id);
+    Call<Product> deleteProduct(@Path("id") String id);
 }
