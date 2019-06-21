@@ -1,8 +1,12 @@
 package de.stephandee.stephandeeappandroid;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,8 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    private IProductService iProductService;
-    private List<Product> mProduct = new ArrayList<>();
+    private List<Product> mProducts = new ArrayList<>();
     private RecyclerView recyclerView;
 
     @Override
@@ -50,22 +53,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        iProductService = APIUtils.getProductService();
-        Call<List<Product>> call = iProductService.getProducts();
-        call.enqueue(new Callback<List<Product>>() {
-            @Override
-            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
-                if (response.isSuccessful()) {
-                    mProduct = response.body();
-                    initRecyclerView(mProduct);
-                }
-            }
+        IProductService iProductService = APIUtils.getProductService();
+        retrieveProductsAndInitRecyclerView(iProductService);
 
-            @Override
-            public void onFailure(Call<List<Product>> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "Es ist ein Fehler aufgetreten.", Toast.LENGTH_LONG).show();
-            }
-        });
+        // Not in use but hold for documentation reasons
+         LocalBroadcastManager.getInstance(this).registerReceiver(
+                 mMessageReceiver,
+                 new IntentFilter("sendProductIndex")
+         );
     }
 
     @Override
@@ -86,15 +81,15 @@ public class MainActivity extends AppCompatActivity {
         switch (resultCode) {
             case 1: {
                 Product product = new Product(productName, Float.parseFloat(productPrice));
+                product.setId(productId);
                 product.setDescription(productDescription);
-                mProduct.add(product);
-                recyclerView.getAdapter().notifyItemInserted(mProduct.size() -1);
+                mProducts.add(product);
+                recyclerView.getAdapter().notifyItemInserted(mProducts.size() - 1);
                 break;
             }
             case 2: {
-
-                for (int i = 0; i < mProduct.size(); i++) {
-                    Product product = mProduct.get(i);
+                for (int i = 0; i < mProducts.size(); i++) {
+                    Product product = mProducts.get(i);
                     if (product.getId().equals(productId)) {
                         product.setName(productName);
                         product.setDescription(productDescription);
@@ -129,6 +124,24 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void retrieveProductsAndInitRecyclerView(IProductService iProductService) {
+        Call<List<Product>> call = iProductService.getProducts();
+        call.enqueue(new Callback<List<Product>>() {
+            @Override
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                if (response.isSuccessful()) {
+                    mProducts = response.body();
+                    initRecyclerView(mProducts);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Product>> call, Throwable t) {
+                Toast.makeText(MainActivity.this, MainActivity.this.getString(R.string.toast_failed), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     private void initRecyclerView(List<Product> products) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView = findViewById(R.id.productList);
@@ -136,4 +149,17 @@ public class MainActivity extends AppCompatActivity {
         RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, products);
         recyclerView.setAdapter(adapter);
     }
+
+    /**
+     * Not in use but for hold for documentation reasons.
+     * Receive Data from Adapter or another Activity to work with within this Activity.
+     */
+    public BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // String productIndex = intent.getStringExtra("product_index");
+            // Toast.makeText(MainActivity.this, productIndex, Toast.LENGTH_LONG).show();
+        }
+    };
 }

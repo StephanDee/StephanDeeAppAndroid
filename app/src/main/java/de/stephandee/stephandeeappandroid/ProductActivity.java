@@ -59,7 +59,7 @@ public class ProductActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<Product> call, Throwable t) {
-                    Toast.makeText(ProductActivity.this, "Es ist ein Fehler aufgetreten.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ProductActivity.this, ProductActivity.this.getString(R.string.toast_failed), Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -78,7 +78,8 @@ public class ProductActivity extends AppCompatActivity {
                 if (!editName.getText().toString().isEmpty() && !editPrice.getText().toString().isEmpty()) {
                     if (hasExtrasProductId) {
                         mProduct.setName(editName.getText().toString());
-                        mProduct.setDescription(editDescription.getText().toString());
+                        String description = !editDescription.getText().toString().isEmpty() ? editDescription.getText().toString() : "";
+                        mProduct.setDescription(description);
                         mProduct.setPrice(Float.parseFloat(editPrice.getText().toString()));
                         updateProduct(mProduct);
                     } else {
@@ -86,10 +87,13 @@ public class ProductActivity extends AppCompatActivity {
                                 editName.getText().toString(),
                                 Float.parseFloat(editPrice.getText().toString())
                         );
+                        if (!editDescription.toString().isEmpty()) {
+                            product.setDescription(editDescription.getText().toString());
+                        }
                         addProduct(product);
                     }
                 } else {
-                    Toast.makeText(ProductActivity.this, "Name und Preis sind Pflichtfelder.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ProductActivity.this, ProductActivity.this.getString(R.string.toast_product_edit_issue), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -118,13 +122,19 @@ public class ProductActivity extends AppCompatActivity {
                     Intent intent = getPriviousIntent(response);
                     setResult(1, intent);
                     finish();
-                    Toast.makeText(ProductActivity.this, "Produkt " + response.body().getName() + " wurde erstellt.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(
+                            ProductActivity.this,
+                            ProductActivity.this.getString(R.string.toast_product_field_1) +
+                                    response.body().getName() +
+                                    ProductActivity.this.getString(R.string.toast_product_field_2_created),
+                            Toast.LENGTH_LONG
+                    ).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Product> call, Throwable t) {
-                Toast.makeText(ProductActivity.this, "Es ist ein Fehler aufgetreten.", Toast.LENGTH_LONG).show();
+                Toast.makeText(ProductActivity.this, ProductActivity.this.getString(R.string.toast_failed), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -140,13 +150,19 @@ public class ProductActivity extends AppCompatActivity {
                     Intent previousIntent = getPriviousIntent(response);
                     setResult(2, previousIntent);
                     finish();
-                    Toast.makeText(ProductActivity.this, "Produkt " + response.body().getName() + " wurde aktualisiert.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(
+                            ProductActivity.this,
+                            ProductActivity.this.getString(R.string.toast_product_field_1) +
+                                    response.body().getName() +
+                                    ProductActivity.this.getString(R.string.toast_product_field_2_updated),
+                            Toast.LENGTH_LONG
+                    ).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Product> call, Throwable t) {
-                Toast.makeText(ProductActivity.this, "Es ist ein Fehler aufgetreten.", Toast.LENGTH_LONG).show();
+                Toast.makeText(ProductActivity.this, ProductActivity.this.getString(R.string.toast_failed), Toast.LENGTH_LONG).show();
             }
         });
     }

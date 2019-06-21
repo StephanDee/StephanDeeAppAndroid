@@ -26,6 +26,11 @@
         android:orientation="vertical"
         android:padding="8dp">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/product_name" />
+
         <EditText
             android:id="@+id/editProductName"
             android:layout_width="match_parent"
@@ -47,6 +52,11 @@
             android:maxLines="10"
             android:minLines="6"
             android:scrollbars="vertical" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/product_price" />
 
         <EditText
             android:id="@+id/editProductPrice"

@@ -27,10 +27,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private static final String TAG = "RecyclerViewAdapter";
 
     private Context mContext;
-    private List<Product> mProduct;
+    private List<Product> mProducts;
 
     public RecyclerViewAdapter(Context mContext, List<Product> mProduct) {
-        this.mProduct = mProduct;
+        this.mProducts = mProduct;
         this.mContext = mContext;
     }
 
@@ -42,19 +42,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
         // Log.d(TAG, "onBindViewHolder: called.");
 
-        viewHolder.productName.setText(mProduct.get(i).getName());
-        viewHolder.productDescription.setText(mProduct.get(i).getDescription());
-        viewHolder.productPrice.setText(Float.toString(mProduct.get(i).getPrice()));
+        viewHolder.productName.setText(mProducts.get(i).getName());
+        viewHolder.productDescription.setText(mProducts.get(i).getDescription());
+        viewHolder.productPrice.setText(Float.toString(mProducts.get(i).getPrice()));
 
         viewHolder.buttonEdit.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, ProductActivity.class);
-                intent.putExtra("product_id", mProduct.get(i).getId());
+                intent.putExtra("product_id", mProducts.get(viewHolder.getAdapterPosition()).getId());
                 ((Activity) mContext).startActivityForResult(intent, 2);
             }
         });
@@ -62,24 +62,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         viewHolder.buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                deleteProduct(mProduct.get(i).getId());
-            }
-        });
-
-        viewHolder.productLayout.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                // Log.d(TAG, "onClick: clicked on:" + mProduct.get(i).getName());
-
-                Toast.makeText(mContext, mProduct.get(i).getName(), Toast.LENGTH_SHORT).show();
+                deleteProduct(mProducts.get(viewHolder.getAdapterPosition()).getId(), viewHolder);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return mProduct.size();
+        return mProducts.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -101,7 +91,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
-    public void deleteProduct(final String id) {
+    public void deleteProduct(final String id, final ViewHolder viewHolder) {
         IProductService iProductService = APIUtils.getProductService();
         Call<Product> call = iProductService.deleteProduct(id);
         call.enqueue(new Callback<Product>() {
@@ -109,13 +99,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onResponse(Call<Product> call, Response<Product> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(mContext, "Produkt wurde gelöscht.", Toast.LENGTH_SHORT).show();
+                    // not in use but hold for documentation reasons
+                    // Intent intent = new Intent("sendProductIndex");
+                    // intent.putExtra("product_index", Integer.toString(viewHolder.getAdapterPosition()));
+                    // LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+
+                    mProducts.remove(viewHolder.getAdapterPosition());
+                    notifyItemRemoved(viewHolder.getAdapterPosition());
+                    notifyItemRangeChanged(viewHolder.getAdapterPosition(), mProducts.size());
+                    Toast.makeText(mContext, mContext.getString(R.string.toast_product_deleted), Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Product> call, Throwable t) {
-                Toast.makeText(mContext, "failed.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, mContext.getString(R.string.toast_failed), Toast.LENGTH_SHORT).show();
             }
         });
     }

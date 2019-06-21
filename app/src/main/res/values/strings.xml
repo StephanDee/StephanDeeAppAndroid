@@ -4,11 +4,20 @@
 
     <!-- Product -->
     <string name="product_title">Produkt</string>
+    <string name="product_name">Name</string>
     <string name="product_description">Beschreibung</string>
     <string name="product_price">Preis</string>
     <string name="product_euro">€</string>
 
     <!-- Buttons -->
     <string name="button_reset">Reset</string>
-    <string name="button_save">Save</string>
+    <string name="button_save">Speichern</string>
+
+    <!-- Toast -->
+    <string name="toast_product_deleted">Produkt wurde gelöscht.</string>
+    <string name="toast_product_edit_issue">Name und Preis sind Pflichtfelder.</string>
+    <string name="toast_product_field_1">Produkt\u0020</string>
+    <string name="toast_product_field_2_created">\u0020wurde erstellt.</string>
+    <string name="toast_product_field_2_updated">\u0020wurde aktualisiert.</string>
+    <string name="toast_failed">Aktion fehlgeschlagen.</string>
 </resources>

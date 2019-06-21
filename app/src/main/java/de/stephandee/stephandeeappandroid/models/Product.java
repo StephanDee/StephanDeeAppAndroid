@@ -39,6 +39,8 @@ public class Product {
         return _id;
     }
 
+    public  void setId(String id) { this._id = id; }
+
     public Date getDate() {
         return date;
     }
