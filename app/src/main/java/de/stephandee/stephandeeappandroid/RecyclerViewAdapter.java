@@ -22,15 +22,26 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * The RecyclerViewAdapter for products.
+ */
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
+    // Debug TAG
     private static final String TAG = "RecyclerViewAdapter";
 
+    // Attributes
     private Context mContext;
     private List<Product> mProducts;
 
-    public RecyclerViewAdapter(Context mContext, List<Product> mProduct) {
-        this.mProducts = mProduct;
+    /**
+     * The constructor of RecyclerViewAdapter.
+     *
+     * @param mContext The application Context
+     * @param mProducts The products
+     */
+    public RecyclerViewAdapter(Context mContext, List<Product> mProducts) {
+        this.mProducts = mProducts;
         this.mContext = mContext;
     }
 
@@ -72,6 +83,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return mProducts.size();
     }
 
+    /**
+     * The ViewHolder, initialize the items inside the View.
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView productName;
         TextView productDescription;
@@ -80,6 +94,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         ImageButton buttonDelete;
         LinearLayout productLayout;
 
+        /**
+         * The constructor of viewHolder.
+         *
+         * @param itemView The list item in the view
+         */
         public ViewHolder(View itemView) {
             super(itemView);
             productName = itemView.findViewById(R.id.productName);
@@ -91,6 +110,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
+    /**
+     * Delete product.
+     *
+     * @param id The product ID
+     * @param viewHolder the view Holder
+     */
     public void deleteProduct(final String id, final ViewHolder viewHolder) {
         IProductService iProductService = APIUtils.getProductService();
         Call<Product> call = iProductService.deleteProduct(id);

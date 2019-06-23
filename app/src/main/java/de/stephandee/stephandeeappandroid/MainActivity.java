@@ -26,10 +26,17 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * The Main Activity.
+ *
+ * @author Stephan D
+ */
 public class MainActivity extends AppCompatActivity {
 
+    // Debug TAG
     private static final String TAG = "MainActivity";
 
+    // Attributes
     private List<Product> mProducts = new ArrayList<>();
     private RecyclerView recyclerView;
 
@@ -53,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // retrieve products and initialize recyclerView
         IProductService iProductService = APIUtils.getProductService();
         retrieveProductsAndInitRecyclerView(iProductService);
 
@@ -71,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         String productDescription = null;
         String productPrice = null;
 
+        // product data from another activity
         if (resultCode == 1 || resultCode == 2) {
             productId = data.getStringExtra("product_id");
             productName = data.getStringExtra("product_name");
@@ -79,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         switch (resultCode) {
-            case 1: {
+            case 1: { // add product to recyclerView
                 Product product = new Product(productName, Float.parseFloat(productPrice));
                 product.setId(productId);
                 product.setDescription(productDescription);
@@ -87,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 recyclerView.getAdapter().notifyItemInserted(mProducts.size() - 1);
                 break;
             }
-            case 2: {
+            case 2: { // Update product in recyclerView
                 for (int i = 0; i < mProducts.size(); i++) {
                     Product product = mProducts.get(i);
                     if (product.getId().equals(productId)) {
@@ -124,6 +133,11 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Retrieves products and initialize the recyclerView.
+     *
+     * @param iProductService service to handle products
+     */
     private void retrieveProductsAndInitRecyclerView(IProductService iProductService) {
         Call<List<Product>> call = iProductService.getProducts();
         call.enqueue(new Callback<List<Product>>() {
@@ -142,6 +156,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initialize the recyclerView.
+     *
+     * @param products The list of products
+     */
     private void initRecyclerView(List<Product> products) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView = findViewById(R.id.productList);
@@ -151,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Not in use but for hold for documentation reasons.
+     * Not in use but hold for documentation reasons.
      * Receive Data from Adapter or another Activity to work with within this Activity.
      */
     public BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {

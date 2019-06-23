@@ -16,10 +16,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * The ProductActivity. This screen is used to create or update a product.
+ */
 public class ProductActivity extends AppCompatActivity {
 
+    // Debug TAG
     private static final String TAG = "ProductActivity";
 
+    // Attributes
     private IProductService iProductService;
     private Product mProduct;
     private EditText editName, editDescription, editPrice;
@@ -28,6 +33,7 @@ public class ProductActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // initialize view and components
         setContentView(R.layout.activity_product);
         Toolbar toolbar = findViewById(R.id.productToolbar);
         setSupportActionBar(toolbar);
@@ -39,6 +45,7 @@ public class ProductActivity extends AppCompatActivity {
         Button editResetButton = findViewById(R.id.editProductButtonReset);
         Button editSaveButton = findViewById(R.id.editProductButtonSave);
 
+        // check if this activity is used to update a product
         final boolean hasExtrasProductId = getIntent().hasExtra("product_id");
         if (hasExtrasProductId) {
             // UPDATE product
@@ -75,14 +82,15 @@ public class ProductActivity extends AppCompatActivity {
         editSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Product validation
                 if (!editName.getText().toString().isEmpty() && !editPrice.getText().toString().isEmpty()) {
-                    if (hasExtrasProductId) {
+                    if (hasExtrasProductId) { // product update
                         mProduct.setName(editName.getText().toString());
                         String description = !editDescription.getText().toString().isEmpty() ? editDescription.getText().toString() : "";
                         mProduct.setDescription(description);
                         mProduct.setPrice(Float.parseFloat(editPrice.getText().toString()));
                         updateProduct(mProduct);
-                    } else {
+                    } else { // add new product
                         Product product = new Product(
                                 editName.getText().toString(),
                                 Float.parseFloat(editPrice.getText().toString())
@@ -99,18 +107,28 @@ public class ProductActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Resets the product to initial state.
+     *
+     * @param product The product
+     */
     private void resetProduct(final Product product) {
-        if (product != null) {
+        if (product != null) { // product exists - update
             editName.setText(product.getName());
             editDescription.setText(product.getDescription());
             editPrice.setText(Float.toString(product.getPrice()));
-        } else {
+        } else { // products does not exists - add
             editName.setText("");
             editDescription.setText("");
             editPrice.setText("");
         }
     }
 
+    /**
+     * Add product.
+     *
+     * @param product the product.
+     */
     private void addProduct(final Product product) {
         iProductService = APIUtils.getProductService();
         Call<Product> call = iProductService.createProduct(product);
@@ -119,7 +137,7 @@ public class ProductActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Product> call, Response<Product> response) {
                 if (response.isSuccessful()) {
-                    Intent intent = getPriviousIntent(response);
+                    Intent intent = getPreviousIntentAndPutExtra(response);
                     setResult(1, intent);
                     finish();
                     Toast.makeText(
@@ -139,6 +157,11 @@ public class ProductActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Update product.
+     *
+     * @param product The product.
+     */
     private void updateProduct(final Product product) {
         iProductService = APIUtils.getProductService();
         Call<Product> call = iProductService.updateProduct(product.getId(), product);
@@ -147,7 +170,7 @@ public class ProductActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Product> call, Response<Product> response) {
                 if (response.isSuccessful()) {
-                    Intent previousIntent = getPriviousIntent(response);
+                    Intent previousIntent = getPreviousIntentAndPutExtra(response);
                     setResult(2, previousIntent);
                     finish();
                     Toast.makeText(
@@ -167,7 +190,13 @@ public class ProductActivity extends AppCompatActivity {
         });
     }
 
-    private Intent getPriviousIntent(Response<Product> response) {
+    /**
+     * Get data from the previous Intent and put extras.
+     *
+     * @param response The response product
+     * @return the previous intent.
+     */
+    private Intent getPreviousIntentAndPutExtra(Response<Product> response) {
         Intent previousIntent = new Intent(getApplicationContext(), MainActivity.class);
         previousIntent.putExtra("product_id", response.body().getId());
         previousIntent.putExtra("product_name", response.body().getName());
